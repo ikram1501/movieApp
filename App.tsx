@@ -1,11 +1,15 @@
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native'
-import BottomTabNavigator from './src/navigations/BottomTabNavigation'
+import 'react-native-gesture-handler';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import BottomTabNavigator from './src/navigations/BottomTabNavigation';
+import { enableScreens } from 'react-native-screens';
+
+enableScreens();
 
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
       <BottomTabNavigator />
     </NavigationContainer>
-  )
+  );
 }
