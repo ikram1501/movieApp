@@ -1,69 +1,123 @@
-// src/screens/MovieDetail.tsx
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigations/HomeStackNavigation';
-import { API_URL, API_ACCESS_TOKEN } from '@env';
+import React, { useEffect, useState } from 'react';
+import { Text, View, Image, ScrollView, StyleSheet, Dimensions } from 'react-native'; // Tambahkan Dimensions
+import { Feather } from '@expo/vector-icons';
+import { API_ACCESS_TOKEN } from '@env';
+import Rekomendasi from '../components/movies/Rekomendasi';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'MovieDetail'>;
-
-const MovieDetail: React.FC<Props> = ({ navigation }) => {
-  const fetchData = (): void => {
-    if (!API_URL || !API_ACCESS_TOKEN) {
-      throw new Error('ENV not found');
-    }
-
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${API_ACCESS_TOKEN}`,
-      },
-    };
-
-    fetch(API_URL, options)
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
+const MovieDetail = ({ route }: any): JSX.Element => {
+  const { id } = route.params;
+  const [movieDetails, setMovieDetails] = useState<any>(null);
 
   useEffect(() => {
-    fetchData();
+    fetchMovieDetails();
   }, []);
 
+  const fetchMovieDetails = async () => {
+    try {
+      const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${API_ACCESS_TOKEN}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const movie = await response.json();
+      setMovieDetails(movie);
+    } catch (error) {
+      console.error('Fetch Error:', error);
+    }
+  };
+
+  if (!movieDetails) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Movie Detail Screen</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HomeScreen')}>
-        <Text style={styles.buttonText}>Kembali</Text>
-      </TouchableOpacity>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image
+        style={styles.poster}
+        source={{ uri: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}` }}
+        resizeMode="contain" // Ubah resizeMode menjadi "contain"
+      />
+      <View style={styles.details}>
+        <Text style={[styles.title, styles.textCenter]}>{movieDetails.title}</Text>
+        <View style={styles.row}>
+          <View style={styles.rowItem}>
+            <Feather name="star" size={24} color="yellow" style={styles.icon} />
+            <Text style={styles.text}>{movieDetails.vote_average.toFixed(1)}</Text>
+          </View>
+          <View style={styles.rowItem}>
+            <Text style={[styles.text, styles.alignRight]}>{`Count: ${movieDetails.vote_count}`}</Text>
+          </View>
+        </View>
+        <View style={styles.row}>
+          <View style={styles.rowItem}>
+            <Text style={styles.text}>{`Release: ${movieDetails.release_date}`}</Text>
+          </View>
+          <View style={styles.rowItem}>
+            <Text style={[styles.text, styles.alignRight]}>{`Popularity: ${movieDetails.popularity.toFixed(2)}`}</Text>
+          </View>
+        </View>
+        <Text style={styles.overview}>{movieDetails.overview}</Text>
+        <Rekomendasi movieId={id} />
+      </View>
+    </ScrollView>
   );
 };
 
+const windowWidth = Dimensions.get('window').width; // Ambil lebar layar
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
+    alignItems: 'center',
+    padding: 16,
+  },
+  poster: {
+    width: windowWidth - 32, // Sesuaikan lebar gambar dengan lebar layar dikurangi padding
+    height: 400, // Tetapkan tinggi gambar
+    borderRadius: 8,
+  },
+  details: {
+    marginTop: 16,
+  },
+  title: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  textCenter: {
+    textAlign: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  rowItem: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
+  icon: {
+    marginRight: 4,
+  },
   text: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 20,
   },
-  button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+  alignRight: {
+    textAlign: 'right',
   },
-  buttonText: {
-    color: '#fff',
+  overview: {
+    marginTop: 12,
     fontSize: 16,
+    lineHeight: 24,
   },
 });
 
