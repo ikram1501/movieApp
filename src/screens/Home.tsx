@@ -1,42 +1,56 @@
-// src/screens/Home.tsx
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigations/HomeStackNavigation';
+import React from 'react'
+import { ScrollView, View, StatusBar, StyleSheet } from 'react-native'
+import type { MovieListProps } from '../types/app.ts'
+import MovieList from '../components/movies/MovieList'
 
-type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
+const movieLists: MovieListProps[] = [
+  {
+    title: 'Now Playing in Theater',
+    path: 'movie/now_playing?language=en-US&page=1',
+    coverType: 'backdrop',
+  },
+  {
+    title: 'Upcoming Movies',
+    path: 'movie/upcoming?language=en-US&page=1',
+    coverType: 'poster',
+  },
+  {
+    title: 'Top Rated Movies',
+    path: 'movie/top_rated?language=en-US&page=1',
+    coverType: 'poster',
+  },
+  {
+    title: 'Popular Movies',
+    path: 'movie/popular?language=en-US&page=1',
+    coverType: 'poster',
+  },
+]
 
-const Home: React.FC<Props> = ({ navigation }) => {
+const Home = (): JSX.Element => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home Screen</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MovieDetail')}>
-        <Text style={styles.buttonText}>Go to Movie Detail</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+    <ScrollView>
+      <View style={styles.container}>
+        {movieLists.map((movieList) => (
+          <MovieList
+            title={movieList.title}
+            path={movieList.path}
+            coverType={movieList.coverType}
+            key={movieList.title}
+          />
+        ))}
+        <StatusBar translucent={false} />
+      </View>
+    </ScrollView>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    marginTop: StatusBar.currentHeight ?? 32,
     alignItems: 'center',
+    justifyContent: 'center',
+    rowGap: 16,
   },
-  text: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
+})
 
-export default Home;
+export default Home
