@@ -1,48 +1,46 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList } from 'react-native'
-import type { MovieListProps, Movie } from '../../types/app'
-import MovieItem from './MovieItem'
-import { API_ACCESS_TOKEN } from '@env'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import type { MovieListProps, Movie } from '../../types/app';
+import MovieItem from './MovieItem';
+import { API_ACCESS_TOKEN } from '@env';
 
 const coverImageSize = {
-    backdrop: {
-      width: 280,
-      height: 160,
-    },
-    poster: {
-      width: 100,
-      height: 160,
-    },
-  }
+  backdrop: {
+    width: 280,
+    height: 160,
+  },
+  poster: {
+    width: 100,
+    height: 160,
+  },
+};
 
 const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
-    const [movies, setMovies] = useState<Movie[]>([])
-  
-    useEffect(() => {
-      getMovieList()
-    }, [])
+  const [movies, setMovies] = useState<Movie[]>([]);
 
-  const getMovieList = (): void => {
-    const url = `https://api.themoviedb.org/3/${path}`
+  useEffect(() => {
+    getMovieList();
+  }, [path]);
+
+  const getMovieList = async (): Promise<void> => { // Ubah tipe pengembalian menjadi Promise<void>
+    const url = `https://api.themoviedb.org/3/${path}`;
     const options = {
       method: 'GET',
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${API_ACCESS_TOKEN}`,
       },
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      setMovies(data.results);
+      console.log('Movies data:', data.results);
+    } catch (error) {
+      console.log('Fetch error:', error);
     }
-
-    fetch(url, options)
-      .then(async (response) => await response.json())
-      .then((response) => {
-        setMovies(response.results)
-      })
-      .catch((errorResponse) => {
-        console.log(errorResponse)
-      })
-  }
-
-  console.log(movies)
+  };
 
   return (
     <View>
@@ -50,7 +48,6 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
         <View style={styles.purpleLabel}></View>
         <Text style={styles.title}>{title}</Text>
       </View>
-      {/* Tambahkan code di bawah ini */}
       <FlatList
         style={{
           ...styles.movieList,
@@ -69,8 +66,8 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
         keyExtractor={(item) => item.id.toString()}
       />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   header: {
@@ -94,6 +91,6 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     marginTop: 8,
   },
-})
+});
 
-export default MovieList
+export default MovieList;
