@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MovieItem from '../components/movies/MovieItem';
-import { useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import MovieDetail from './MovieDetail';
 import { Movie } from '../types/app'; // Import Movie interface from types/app
 
-const Favorite = (): JSX.Element => {
+const FavoriteScreen = (): JSX.Element => {
   const [favoriteMovies, setFavoriteMovies] = useState<Movie[]>([]);
-  const navigation = useNavigation();
 
   useEffect(() => {
     fetchFavoriteMovies();
@@ -65,6 +66,25 @@ const Favorite = (): JSX.Element => {
     </View>
   );
 };
+
+const Stack = createNativeStackNavigator();
+
+const Favorite = (): JSX.Element => (
+  <NavigationContainer independent={true}>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="FavoriteScreen"
+        component={FavoriteScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MovieDetail"
+        component={MovieDetail}
+        options={{ title: 'Movie Detail' }}
+      />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
 
 const styles = StyleSheet.create({
   container: {
