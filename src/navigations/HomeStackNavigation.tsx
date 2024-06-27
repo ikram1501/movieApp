@@ -6,7 +6,7 @@ import MovieDetail from '../screens/MovieDetail';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
-  MovieDetail: undefined;
+  MovieDetail: { id: number }; // Pastikan parameter untuk MovieDetail ditentukan dengan jelas
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
