@@ -11,19 +11,25 @@ const Rekomendasi = ({ movieId }: { movieId: number }): JSX.Element => {
 
   useEffect(() => {
     fetchRecommendations();
-  }, []);
+  }, [movieId]);
 
   const fetchRecommendations = async () => {
+    const url = `https://api.themoviedb.org/3/movie/${movieId}/recommendations?language=en-US&page=1`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${API_ACCESS_TOKEN}`,
+      },
+    };
+
     try {
-      const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/recommendations?language=en-US&page=1`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_ACCESS_TOKEN}`,
-        },
-      });
+      console.log(`Fetching recommendations from: ${url}`);
+      const response = await fetch(url, options);
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorText = await response.text();
+        console.error(`Network response was not ok: ${errorText}`);
+        throw new Error(`Network response was not ok: ${response.statusText}`);
       }
       const data = await response.json();
       setRecommendations(data.results);

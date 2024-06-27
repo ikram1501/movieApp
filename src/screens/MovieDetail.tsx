@@ -14,22 +14,23 @@ const MovieDetail = ({ route }: any): JSX.Element => {
 
   const fetchMovieDetails = async () => {
     try {
-      const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_ACCESS_TOKEN}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const movie = await response.json();
-      setMovieDetails(movie);
+       const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
+          method: 'GET',
+          headers: {
+             'Content-Type': 'application/json',
+             Authorization: `Bearer ${API_ACCESS_TOKEN}`,
+          },
+       });
+       if (!response.ok) {
+          throw new Error('Network response was not ok');
+       }
+       const movie = await response.json();
+       setMovieDetails(movie);
     } catch (error) {
-      console.error('Fetch Error:', error);
+       console.error('Fetch Error:', error);
     }
-  };
+ };
+ 
 
   if (!movieDetails) {
     return (
@@ -44,7 +45,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
       <Image
         style={styles.poster}
         source={{ uri: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}` }}
-        resizeMode="contain" // Ubah resizeMode menjadi "contain"
+        resizeMode="contain"
       />
       <View style={styles.details}>
         <Text style={[styles.title, styles.textCenter]}>{movieDetails.title}</Text>
@@ -59,7 +60,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
         </View>
         <View style={styles.row}>
           <View style={styles.rowItem}>
-            <Text style={styles.text}>{`Release: ${movieDetails.release_date}`}</Text>
+            <Text style={styles.text}>{movieDetails.release_date}</Text>
           </View>
           <View style={styles.rowItem}>
             <Text style={[styles.text, styles.alignRight]}>{`Popularity: ${movieDetails.popularity.toFixed(2)}`}</Text>
@@ -72,7 +73,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
   );
 };
 
-const windowWidth = Dimensions.get('window').width; // Ambil lebar layar
+const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
