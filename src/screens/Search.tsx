@@ -3,8 +3,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import CategorySearch from '../components/search/CategorySearch';
 import KeywordSearch from '../components/search/KeywordSearch';
 import { API_ACCESS_TOKEN } from '@env';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import MovieDetail from './MovieDetail';
+import { Movie } from '../types/app'; // Import Movie interface from types/app
 
-const Search = (): JSX.Element => {
+const SearchScreen = (): JSX.Element => {
   const [selectedBar, setSelectedBar] = useState<string>('category');
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
 
@@ -20,7 +24,7 @@ const Search = (): JSX.Element => {
         });
         if (response.ok) {
           const data = await response.json();
-          setGenres(data.genres); 
+          setGenres(data.genres); // Simpan data genre ke dalam state
         } else {
           console.error('Failed to fetch genres');
         }
@@ -34,6 +38,7 @@ const Search = (): JSX.Element => {
 
   const handleGenreSelect = (genreId: number) => {
     console.log('Selected genre:', genreId);
+    // Lakukan sesuatu dengan genreId seperti pencarian film berdasarkan genre
   };
 
   return (
@@ -59,10 +64,33 @@ const Search = (): JSX.Element => {
           </TouchableOpacity>
         ))}
       </View>
-      {selectedBar === 'keyword' ? <KeywordSearch /> : <CategorySearch genres={genres} onSelectGenre={handleGenreSelect} />}
+      {selectedBar === 'keyword' ? (
+        <KeywordSearch />
+      ) : (
+        <CategorySearch genres={genres} onSelectGenre={handleGenreSelect} />
+      )}
     </View>
   );
 };
+
+const Stack = createNativeStackNavigator();
+
+const Search = (): JSX.Element => (
+  <NavigationContainer independent={true}>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MovieDetail"
+        component={MovieDetail}
+        options={{ title: 'Movie Detail' }}
+      />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
 
 const styles = StyleSheet.create({
   container: {

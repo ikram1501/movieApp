@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import { API_ACCESS_TOKEN } from '@env';
-import type { Movie } from '../../types/app';
+import type { MovieListProps, Movie } from '../../types/app';
 import MovieItem from './MovieItem';
 
 const Rekomendasi = ({ movieId }: { movieId: number }): JSX.Element => {
@@ -33,6 +33,7 @@ const Rekomendasi = ({ movieId }: { movieId: number }): JSX.Element => {
       }
       const data = await response.json();
       setRecommendations(data.results);
+      console.log('Recommendations data:', data.results);
     } catch (error) {
       console.error('Fetch Error:', error);
     }

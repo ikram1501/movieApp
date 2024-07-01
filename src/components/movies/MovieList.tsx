@@ -22,7 +22,7 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
     getMovieList();
   }, [path]);
 
-  const getMovieList = async (): Promise<void> => { // Ubah tipe pengembalian menjadi Promise<void>
+  const getMovieList = async (): Promise<void> => {
     const url = `https://api.themoviedb.org/3/${path}`;
     const options = {
       method: 'GET',
@@ -33,12 +33,21 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
     };
 
     try {
+      console.log(`Fetching movies from: ${url}`);
       const response = await fetch(url, options);
       const data = await response.json();
-      setMovies(data.results);
-      console.log('Movies data:', data.results);
+      
+      // Tambahkan log untuk memverifikasi data yang diterima
+      console.log('Response data:', data);
+      
+      if (data.results) {
+        setMovies(data.results);
+        console.log('Movies data:', data.results);
+      } else {
+        console.error('Data results is undefined or not present:', data);
+      }
     } catch (error) {
-      console.log('Fetch error:', error);
+      console.error('Fetch error:', error);
     }
   };
 
