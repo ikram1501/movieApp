@@ -5,7 +5,7 @@ import MovieItem from '../components/movies/MovieItem';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import MovieDetail from './MovieDetail';
-import { Movie } from '../types/app'; // Import Movie interface from types/app
+import { Movie } from '../types/app';
 
 const FavoriteScreen = (): JSX.Element => {
   const [favoriteMovies, setFavoriteMovies] = useState<Movie[]>([]);
@@ -14,6 +14,7 @@ const FavoriteScreen = (): JSX.Element => {
     fetchFavoriteMovies();
   }, []);
 
+  // Fungsi asinkron untuk mengambil daftar film favorit dari AsyncStorage.
   const fetchFavoriteMovies = async () => {
     try {
       const favoriteMoviesData = await AsyncStorage.getItem('@FavoriteList');
@@ -26,12 +27,15 @@ const FavoriteScreen = (): JSX.Element => {
     }
   };
 
-  // Calculate item width based on screen width and number of columns
+  // Menghitung lebar dan tinggi setiap item film
+  // berdasarkan lebar layar dan jumlah kolom.
   const numColumns = 3;
   const screenWidth = Dimensions.get('window').width;
-  const itemWidth = (screenWidth - 48) / numColumns; // Adjust padding as necessary
-  const itemHeight = itemWidth * 1.3; // Adjust aspect ratio based on your MovieItem design
+  const itemWidth = (screenWidth - 48) / numColumns;
+  const itemHeight = itemWidth * 1.3;
 
+  // Fungsi untuk merender daftar film dalam bentuk grid, 
+  // menggunakan MovieItem untuk setiap film.
   const renderMovies = () => {
     const rows = Math.ceil(favoriteMovies.length / numColumns);
     const movieRows = [];
@@ -56,6 +60,10 @@ const FavoriteScreen = (): JSX.Element => {
     return movieRows;
   };
 
+  /*
+  Mengembalikan tampilan yang menampilkan teks "No favorite movies found" 
+  jika tidak ada film favorit, atau daftar film favorit dalam grid jika ada.
+  */
   return (
     <View style={styles.container}>
       {favoriteMovies.length === 0 ? (
@@ -67,6 +75,7 @@ const FavoriteScreen = (): JSX.Element => {
   );
 };
 
+// Mengatur navigasi antara FavoriteScreen dan MovieDetail. 
 const Stack = createNativeStackNavigator();
 
 const Favorite = (): JSX.Element => (
@@ -90,17 +99,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    paddingTop: 30, // Adjust spacing from top
+    paddingTop: 30,
   },
   moviesContainer: {
-    flexDirection: 'column', // Layout rows vertically
-    alignItems: 'flex-start', // Start from top-left
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     width: '100%',
   },
   row: {
-    flexDirection: 'row', // Layout items horizontally
-    justifyContent: 'space-between', // Adjust spacing between items
-    marginBottom: 12, // Adjust spacing between rows
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
 });
 

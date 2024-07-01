@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import { API_ACCESS_TOKEN } from '@env';
-import type { MovieListProps, Movie } from '../../types/app';
+import type { Movie } from '../../types/app';
 import MovieItem from './MovieItem';
 
 const Rekomendasi = ({ movieId }: { movieId: number }): JSX.Element => {

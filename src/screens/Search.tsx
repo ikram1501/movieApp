@@ -1,4 +1,3 @@
-// Search.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import CategorySearch from '../components/search/CategorySearch';
@@ -21,7 +20,7 @@ const Search = (): JSX.Element => {
         });
         if (response.ok) {
           const data = await response.json();
-          setGenres(data.genres); // Simpan data genre ke dalam state
+          setGenres(data.genres); 
         } else {
           console.error('Failed to fetch genres');
         }
@@ -35,7 +34,6 @@ const Search = (): JSX.Element => {
 
   const handleGenreSelect = (genreId: number) => {
     console.log('Selected genre:', genreId);
-    // Lakukan sesuatu dengan genreId seperti pencarian film berdasarkan genre
   };
 
   return (

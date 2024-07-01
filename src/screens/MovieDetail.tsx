@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Image, ScrollView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { 
+  Text, 
+  View, 
+  Image,
+  ScrollView, 
+  StyleSheet, 
+  Dimensions, 
+  TouchableOpacity 
+} from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { API_ACCESS_TOKEN } from '@env';
+
+//Untuk menyimpan dan mengambil data secara asinkron di penyimpanan lokal.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Rekomendasi from '../components/movies/Rekomendasi';
 
@@ -23,9 +33,10 @@ const MovieDetail = ({ route }: any): JSX.Element => {
 
   useEffect(() => {
     fetchMovieDetails();
-    checkIsFavorite(id); // Panggil checkIsFavorite saat komponen dimuat
+    checkIsFavorite(id);
   }, []);
 
+  //Mengambil detail film dari API menggunakan ID film
   const fetchMovieDetails = async () => {
     try {
       const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
@@ -45,13 +56,14 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     }
   };
 
+  // Memeriksa apakah film ada di daftar favorit di AsyncStorage.
   const checkIsFavorite = async (movieId: number): Promise<boolean> => {
     try {
       const favoriteMovies = await AsyncStorage.getItem('@FavoriteList');
       if (favoriteMovies !== null) {
         const parsedFavorites: Movie[] = JSON.parse(favoriteMovies);
         const isFav = parsedFavorites.some(movie => movie.id === movieId);
-        setIsFavorite(isFav); // Update isFavorite berdasarkan hasil check
+        setIsFavorite(isFav);
         return isFav;
       }
       return false;
@@ -61,6 +73,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     }
   };
 
+  // Menambahkan film ke daftar favorit di AsyncStorage.
   const addFavorite = async (movie: Movie): Promise<void> => {
     try {
       const initialData: string | null = await AsyncStorage.getItem('@FavoriteList');
@@ -79,6 +92,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     }
   };
 
+  //Menghapus film dari daftar favorit di AsyncStorage.
   const removeFavorite = async (movieId: number): Promise<void> => {
     try {
       const initialData: string | null = await AsyncStorage.getItem('@FavoriteList');
@@ -103,6 +117,9 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     );
   }
 
+  // Menampilkan detail film, termasuk 
+  // gambar, ikon favorit, judul, rating, tanggal rilis, popularitas, dan deskripsi. 
+  // Menampilkan komponen Rekomendasi untuk rekomendasi film.
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
